@@ -1,0 +1,32 @@
+services:
+  juice-shop:
+    image: bkimminich/juice-shop
+    container_name: juice-shop
+    volumes:
+      - juice-data:/juice-shop/data
+      - juice-logs:/juice-shop/logs
+    networks:
+      - juice-net
+    restart: always
+
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /var/log/nginx:/var/log/nginx
+    networks:
+      - juice-net
+    depends_on:
+      - juice-shop
+    restart: always
+
+networks:
+  juice-net:
+    driver: bridge
+
+volumes:
+  juice-data:
+  juice-logs:
